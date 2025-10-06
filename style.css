@@ -45,10 +45,9 @@ section {
     padding: 80px 0;
 }
 
-/* ===== SECCIÓN HERO ===== */
+/* ===== SECCIÓN HERO (ACTUALIZADA) ===== */
 .hero {
-    /* ⚠️ REEMPLAZAR: Cambia 'background-image' por la ruta de tu imagen de logros */
-    background: linear-gradient(rgba(0, 64, 128, 0.7), rgba(0, 64, 128, 0.7)), url('https://storage.googleapis.com/gweb-cloud-media-pub/images/colecta-anual.original.png') no-repeat center center/cover;
+    background: var(--color-primary); /* Fondo azul sólido, sin imagen */
     height: 90vh;
     display: flex;
     justify-content: center;
@@ -115,13 +114,45 @@ section {
     height: 100%;
 }
 
-/* ===== SECCIÓN IMPACTO ===== */
-.impact-image {
-    display: block;
-    max-width: 100%;
-    margin: 0 auto;
+/* ===== SECCIÓN DE LOGROS (CÓDIGO NUEVO Y MEJORADO) ===== */
+.impact-section {
+    background-color: var(--color-light-gray);
+}
+
+.impact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 30px;
+    margin-top: 50px;
+    text-align: center; 
+}
+
+.impact-item {
+    background-color: var(--color-white);
+    padding: 30px 20px;
     border-radius: 10px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-bottom: 4px solid var(--color-accent);
+}
+
+.impact-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.impact-item h3 {
+    font-size: 3.5rem;
+    color: var(--color-accent);
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.impact-item p {
+    font-size: 1.1rem;
+    color: var(--color-primary);
+    font-weight: 700;
+    line-height: 1.4;
 }
 
 /* ===== SECCIÓN FORMULARIO DE DONACIÓN ===== */
