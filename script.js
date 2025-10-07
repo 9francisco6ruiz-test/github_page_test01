@@ -9,14 +9,15 @@
     const voluntarioParam = urlParams.get('vol');
     
     if (voluntarioParam) {
-      // Si viene el parámetro, guardarlo
+      // Si viene el parámetro, guardarlo y mostrar mensaje
       localStorage.setItem('isf_voluntario', voluntarioParam);
       console.log('✅ Voluntario detectado:', voluntarioParam);
       personalizarMensaje(voluntarioParam);
     } else {
-      // Si NO viene el parámetro, limpiar cualquier valor guardado
+      // Si NO viene el parámetro, limpiar localStorage y REMOVER mensaje
       localStorage.removeItem('isf_voluntario');
       console.log('🧹 Parámetro vol no detectado, localStorage limpiado');
+      removerMensajeVoluntario();
     }
   }
 
@@ -48,7 +49,18 @@
   }
 
   // ============================================
-  // 3. VALIDAR FORMULARIO DE DONANTE
+  // 3. REMOVER MENSAJE DE VOLUNTARIO
+  // ============================================
+  function removerMensajeVoluntario() {
+    const mensajeDiv = document.getElementById('mensaje-voluntario');
+    if (mensajeDiv) {
+      mensajeDiv.remove();
+      console.log('🗑️ Mensaje de voluntario removido del DOM');
+    }
+  }
+
+  // ============================================
+  // 4. VALIDAR FORMULARIO DE DONANTE
   // ============================================
   function validarFormulario() {
     const donorNameInput = document.getElementById('donor-name');
@@ -79,7 +91,7 @@
   }
 
   // ============================================
-  // 4. FUNCIÓN PRINCIPAL: IR A DONAR
+  // 5. FUNCIÓN PRINCIPAL: IR A DONAR
   // ============================================
   function irADonar(monto, donante) {
     const voluntario = localStorage.getItem('isf_voluntario') || 'directo';
@@ -116,7 +128,7 @@
   }
 
   // ============================================
-  // 5. INICIALIZAR BOTONES Y LÓGICA DE DONACIÓN
+  // 6. INICIALIZAR BOTONES Y LÓGICA DE DONACIÓN
   // ============================================
   function inicializarEventosDonacion() {
     const botones = document.querySelectorAll('.donation-btn');
@@ -156,7 +168,7 @@
   }
 
   // ============================================
-  // 6. INICIAR TODO CUANDO EL DOM ESTÉ LISTO
+  // 7. INICIAR TODO CUANDO EL DOM ESTÉ LISTO
   // ============================================
   document.addEventListener('DOMContentLoaded', function() {
     inicializarTracking();
