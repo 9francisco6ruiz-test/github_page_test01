@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Gracias por tu donación! - ISF Chile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .thank-you-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #004080 0%, #0059b3 100%);
+            padding: 20px;
+        }
+        .thank-you-card {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .thank-you-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 1s ease infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .thank-you-title {
+            font-size: 2.5rem;
+            color: #004080;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+        .thank-you-text {
+            font-size: 1.2rem;
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        .btn-primary {
+            display: inline-block;
+            padding: 15px 40px;
+            background: #F28C28;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+        }
+        .social-share {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+        .social-share h3 {
+            color: #004080;
+            margin-bottom: 15px;
+        }
+        .share-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .share-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        .share-btn:hover {
+            transform: scale(1.1);
+        }
+        .share-btn.twitter { background: #1DA1F2; }
+        .share-btn.facebook { background: #4267B2; }
+        .share-btn.whatsapp { background: #25D366; }
+        .share-btn.linkedin { background: #0077B5; }
+    </style>
+</head>
+<body>
+    <div class="thank-you-container">
+        <div class="thank-you-card">
+            <div class="thank-you-icon">🎉</div>
+            <h1 class="thank-you-title">¡Gracias por tu donación!</h1>
+            <p class="thank-you-text">
+                Tu generosidad hace posible que continuemos llevando ingeniería 
+                a comunidades que más lo necesitan.
+            </p>
+            <p class="thank-you-text">
+                <strong>Juntos estamos construyendo un mundo más justo y equitativo.</strong>
+            </p>
+            
+            <a href="index.html" class="btn-primary">Volver al inicio</a>
+
+            <div class="social-share">
+                <h3>Ayúdanos a llegar a más personas</h3>
+                <div class="share-buttons">
+                    <a href="#" class="share-btn twitter" id="share-twitter">Twitter</a>
+                    <a href="#" class="share-btn facebook" id="share-facebook">Facebook</a>
+                    <a href="#" class="share-btn whatsapp" id="share-whatsapp">WhatsApp</a>
+                    <a href="#" class="share-btn linkedin" id="share-linkedin">LinkedIn</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlBase = window.location.origin;
+        const mensaje = encodeURIComponent('¡Acabo de donar a ISF Chile! Únete y ayuda a llevar ingeniería a comunidades vulnerables. 🌍');
+        const urlCampana = encodeURIComponent(urlBase);
+
+        document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?text=${mensaje}&url=${urlCampana}`;
+        document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${urlCampana}`;
+        document.getElementById('share-whatsapp').href = `https://wa.me/?text=${mensaje}%20${urlCampana}`;
+        document.getElementById('share-linkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${urlCampana}`;
+    </script>
+</body>
+</html>
