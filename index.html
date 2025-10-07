@@ -31,35 +31,15 @@
     </header>
 
     <main>
-        <section class="video-section">
-            <div class="container">
-                <h2>Conoce cómo tu aporte transforma vidas</h2>
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/_MpcewCiwQg" title="Video Institucional ISF Chile" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                </div>
-            </div>
-        </section>
-
-        <section class="impact-section">
-            <div class="container">
-                <h2>Nuestros logros</h2>
-                <div class="impact-grid">
-                    <div class="impact-item"><h3>4</h3><p>Regiones de Chile</p></div>
-                    <div class="impact-item"><h3>38</h3><p>Proyectos de Ingeniería Humanitaria</p></div>
-                    <div class="impact-item"><h3>450+</h3><p>Voluntari@s Movilizados</p></div>
-                    <div class="impact-item"><h3>9000+</h3><p>Personas Beneficiadas</p></div>
-                </div>
-            </div>
-        </section>
-
+        <!-- ===== SECCIÓN FORMULARIO DE DONACIÓN (MOVIDA AQUÍ) ===== -->
         <section id="donation" class="donation-section">
             <div class="container">
                 <h2>Realiza tu donación</h2>
                 <p class="donation-subtitle">Tu aporte, sin importar el monto, impulsa proyectos de ingeniería humanitaria.</p>
                 
-                <div class="donation-wrapper">
+                <div class="donation-widget">
                     <!-- PASO 1: FORMULARIO DE DATOS -->
-                    <div class="form-container">
+                    <div class="form-step">
                         <h3>1. Completa tus datos</h3>
                         <form id="donor-form">
                             <div class="form-group">
@@ -74,7 +54,7 @@
                     </div>
 
                     <!-- PASO 2: SELECCIÓN DE MONTO -->
-                    <div class="amount-container">
+                    <div class="amount-step">
                         <h3>2. Elige un monto</h3>
                         <div class="donation-options">
                             <button class="donation-btn" data-monto="5000">$5.000 CLP</button>
@@ -83,10 +63,33 @@
                             <button class="donation-btn" data-monto="50000">$50.000 CLP</button>
                         </div>
                         <div class="custom-amount-wrapper">
-                            <input type="number" id="custom-amount-input" placeholder="Otro monto" min="1000">
+                            <input type="number" id="custom-amount-input" placeholder="Otro monto (CLP)" min="1000">
                             <button class="donation-btn" id="custom-amount-btn">Donar este monto</button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECCIÓN VIDEO INSTITUCIONAL (AHORA SEGUNDA) ===== -->
+        <section class="video-section">
+            <div class="container">
+                <h2>Conoce cómo tu aporte transforma vidas</h2>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/_MpcewCiwQg" title="Video Institucional ISF Chile" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECCIÓN DE LOGROS E IMPACTO (AHORA TERCERA) ===== -->
+        <section class="impact-section">
+            <div class="container">
+                <h2>Nuestros logros</h2>
+                <div class="impact-grid">
+                    <div class="impact-item"><h3>4</h3><p>Regiones de Chile</p></div>
+                    <div class="impact-item"><h3>38</h3><p>Proyectos de Ingeniería Humanitaria</p></div>
+                    <div class="impact-item"><h3>450+</h3><p>Voluntari@s Movilizados</p></div>
+                    <div class="impact-item"><h3>9000+</h3><p>Personas Beneficiadas</p></div>
                 </div>
             </div>
         </section>
