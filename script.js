@@ -9,14 +9,14 @@
     const voluntarioParam = urlParams.get('vol');
     
     if (voluntarioParam) {
+      // Si viene el parámetro, guardarlo
       localStorage.setItem('isf_voluntario', voluntarioParam);
       console.log('✅ Voluntario detectado:', voluntarioParam);
       personalizarMensaje(voluntarioParam);
-    }
-    
-    const voluntarioActual = localStorage.getItem('isf_voluntario');
-    if (voluntarioActual && !voluntarioParam) {
-      personalizarMensaje(voluntarioActual);
+    } else {
+      // Si NO viene el parámetro, limpiar cualquier valor guardado
+      localStorage.removeItem('isf_voluntario');
+      console.log('🧹 Parámetro vol no detectado, localStorage limpiado');
     }
   }
 
