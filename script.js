@@ -1,8 +1,3 @@
-// ============================================
-// ISF CHILE - ALCANCÍAS DIGITALES
-// Sistema de tracking de voluntarios
-// ============================================
-
 (function() {
   'use strict';
 
@@ -42,38 +37,62 @@
         mensajeDiv.id = 'mensaje-voluntario';
         mensajeDiv.style.cssText = `
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          padding: 15px 20px;
-          border-radius: 10px;
-          margin: 20px auto 0;
-          max-width: 600px;
-          text-align: center;
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-          animation: slideIn 0.5s ease-out;
+          color: white; padding: 15px 20px; border-radius: 10px; margin: 20px auto 0;
+          max-width: 600px; text-align: center; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         `;
         const heroContent = hero.querySelector('.hero-content');
-        if (heroContent) {
-          heroContent.appendChild(mensajeDiv);
-        }
+        if (heroContent) { heroContent.appendChild(mensajeDiv); }
       }
       mensajeDiv.innerHTML = `<p style="margin: 0; font-size: 1.1rem;">🤝 Estás apoyando la campaña de <strong>${nombreFormateado}</strong></p>`;
     }
   }
 
   // ============================================
-  // 3. FUNCIÓN PRINCIPAL: IR A DONAR
+  // 3. VALIDAR FORMULARIO DE DONANTE
   // ============================================
-  function irADonar(monto) {
-    const voluntario = localStorage.getItem('isf_voluntario') || 'directo';
-    const uuid = generarUUID();
+  function validarFormulario() {
+    const donorNameInput = document.getElementById('donor-name');
+    const donorEmailInput = document.getElementById('donor-email');
     
-    // IMPORTANTE: Ajustar según documentación real de Payku
+    const name = donorNameInput.value.trim();
+    const email = donorEmailInput.value.trim();
+
+    // Resetear estilos de error
+    donorNameInput.style.borderColor = '#ccc';
+    donorEmailInput.style.borderColor = '#ccc';
+
+    if (!name) {
+        alert('Por favor, ingresa tu nombre completo.');
+        donorNameInput.style.borderColor = 'red';
+        donorNameInput.focus();
+        return null;
+    }
+
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+        alert('Por favor, ingresa un correo electrónico válido.');
+        donorEmailInput.style.borderColor = 'red';
+        donorEmailInput.focus();
+        return null;
+    }
+
+    return { name, email };
+  }
+
+  // ============================================
+  // 4. FUNCIÓN PRINCIPAL: IR A DONAR
+  // ============================================
+  function irADonar(monto, donante) {
+    const voluntario = localStorage.getItem('isf_voluntario') || 'directo';
+    const uuid = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
+    
     const paykuConfig = {
       baseUrl: 'https://app.payku.cl/payment',
       publicKey: 'tu_public_key_aqui' // ← ¡¡¡REEMPLAZAR CON TU PUBLIC KEY DE PAYKU!!!
     };
     
     const params = new URLSearchParams({
+      email: donante.email,
+      name: donante.name,
       amount: monto,
       subject: 'Donación ISF Chile',
       external_id: uuid,
@@ -88,6 +107,7 @@
     console.log('🚀 Datos de donación:', {
       monto: monto,
       voluntario: voluntario,
+      donante: donante,
       uuid: uuid,
       timestamp: new Date().toISOString()
     });
@@ -96,32 +116,39 @@
   }
 
   // ============================================
-  // 4. GENERAR UUID (compatible con todos los navegadores)
+  // 5. INICIALIZAR BOTONES Y LÓGICA DE DONACIÓN
   // ============================================
-  function generarUUID() {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-      return crypto.randomUUID();
-    }
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  }
-
-  // ============================================
-  // 5. INICIALIZAR BOTONES DE DONACIÓN
-  // ============================================
-  function inicializarBotones() {
+  function inicializarEventosDonacion() {
     const botones = document.querySelectorAll('.donation-btn');
+    
     botones.forEach(boton => {
       boton.addEventListener('click', function(e) {
         e.preventDefault();
-        let monto = this.getAttribute('data-monto');
-        if (monto) {
-          irADonar(parseInt(monto));
+        
+        // Primero, validar el formulario de datos del donante
+        const donante = validarFormulario();
+        if (!donante) {
+            return; // Si la validación falla, no hacer nada más
+        }
+
+        let monto;
+        // Comprobar si es el botón de monto personalizado
+        if (this.id === 'custom-amount-btn') {
+            const customInput = document.getElementById('custom-amount-input');
+            monto = parseInt(customInput.value, 10);
+            if (isNaN(monto) || monto < 1000) {
+                alert('Por favor, ingresa un monto válido (mínimo $1.000).');
+                customInput.style.borderColor = 'red';
+                customInput.focus();
+                return;
+            }
         } else {
-          console.error('❌ No se pudo determinar el monto para este botón');
+            // Es un botón de monto predefinido
+            monto = parseInt(this.getAttribute('data-monto'), 10);
+        }
+
+        if (monto) {
+          irADonar(monto, donante);
         }
       });
     });
@@ -131,13 +158,9 @@
   // ============================================
   // 6. INICIAR TODO CUANDO EL DOM ESTÉ LISTO
   // ============================================
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      inicializarTracking();
-      inicializarBotones();
-    });
-  } else {
+  document.addEventListener('DOMContentLoaded', function() {
     inicializarTracking();
-    inicializarBotones();
-  }
+    inicializarEventosDonacion();
+  });
+
 })();
