@@ -9,12 +9,10 @@
     const voluntarioParam = urlParams.get('vol');
     
     if (voluntarioParam) {
-      // Si viene el parámetro, guardarlo y mostrar mensaje
       localStorage.setItem('isf_voluntario', voluntarioParam);
       console.log('✅ Voluntario detectado:', voluntarioParam);
       personalizarMensaje(voluntarioParam);
     } else {
-      // Si NO viene el parámetro, limpiar localStorage y REMOVER mensaje
       localStorage.removeItem('isf_voluntario');
       console.log('🧹 Parámetro vol no detectado, localStorage limpiado');
       removerMensajeVoluntario();
@@ -30,21 +28,21 @@
       .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
       .join(' ');
     
-    const hero = document.querySelector('.hero');
-    if (hero) {
+    const heroContent = document.querySelector('.hero-content');
+    if (heroContent) {
       let mensajeDiv = document.getElementById('mensaje-voluntario');
       if (!mensajeDiv) {
         mensajeDiv = document.createElement('div');
         mensajeDiv.id = 'mensaje-voluntario';
-        mensajeDiv.style.cssText = `
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white; padding: 15px 20px; border-radius: 10px; margin: 20px auto 0;
-          max-width: 600px; text-align: center; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        `;
-        const heroContent = hero.querySelector('.hero-content');
-        if (heroContent) { heroContent.appendChild(mensajeDiv); }
+        // Los estilos ahora están en el CSS para una mejor organización
+        heroContent.insertAdjacentHTML('afterbegin', `
+          <div id="mensaje-voluntario">
+            <p>🤝 Estás apoyando la campaña de <strong>${nombreFormateado}</strong></p>
+          </div>
+        `);
+      } else {
+        mensajeDiv.innerHTML = `<p>🤝 Estás apoyando la campaña de <strong>${nombreFormateado}</strong></p>`;
       }
-      mensajeDiv.innerHTML = `<p style="margin: 0; font-size: 1.1rem;">🤝 Estás apoyando la campaña de <strong>${nombreFormateado}</strong></p>`;
     }
   }
 
@@ -60,34 +58,47 @@
   }
 
   // ============================================
-  // 4. VALIDAR FORMULARIO DE DONANTE
+  // 4. VALIDAR FORMULARIO DE DONANTE (VERSIÓN MEJORADA)
   // ============================================
   function validarFormulario() {
     const donorNameInput = document.getElementById('donor-name');
     const donorEmailInput = document.getElementById('donor-email');
-    
+    const errorNameEl = document.getElementById('error-donor-name');
+    const errorEmailEl = document.getElementById('error-donor-email');
+
     const name = donorNameInput.value.trim();
     const email = donorEmailInput.value.trim();
+    let esValido = true;
 
-    // Resetear estilos de error
-    donorNameInput.style.borderColor = '#ccc';
-    donorEmailInput.style.borderColor = '#ccc';
+    // --- Limpiar errores previos ---
+    donorNameInput.classList.remove('error-input');
+    errorNameEl.textContent = '';
+    donorEmailInput.classList.remove('error-input');
+    errorEmailEl.textContent = '';
 
-    if (!name) {
-        alert('Por favor, ingresa tu nombre completo.');
-        donorNameInput.style.borderColor = 'red';
-        donorNameInput.focus();
-        return null;
+    // --- Validación del Nombre ---
+    if (name === '') {
+      errorNameEl.textContent = 'Por favor, ingresa tu nombre completo.';
+      donorNameInput.classList.add('error-input');
+      esValido = false;
     }
 
-    if (!email || !/\S+@\S+\.\S+/.test(email)) {
-        alert('Por favor, ingresa un correo electrónico válido.');
-        donorEmailInput.style.borderColor = 'red';
-        donorEmailInput.focus();
-        return null;
+    // --- Validación del Email ---
+    if (email === '') {
+      errorEmailEl.textContent = 'El correo electrónico es obligatorio.';
+      donorEmailInput.classList.add('error-input');
+      esValido = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errorEmailEl.textContent = 'Por favor, ingresa un correo válido.';
+      donorEmailInput.classList.add('error-input');
+      esValido = false;
     }
-
-    return { name, email };
+    
+    if (esValido) {
+      return { name, email };
+    } else {
+      return null;
+    }
   }
 
   // ============================================
@@ -95,7 +106,7 @@
   // ============================================
   function irADonar(monto, donante) {
     const voluntario = localStorage.getItem('isf_voluntario') || 'directo';
-    const uuid = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
+    const uuid = self.crypto.randomUUID ? self.crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
     
     const paykuConfig = {
       baseUrl: 'https://app.payku.cl/payment',
@@ -137,25 +148,29 @@
       boton.addEventListener('click', function(e) {
         e.preventDefault();
         
-        // Primero, validar el formulario de datos del donante
         const donante = validarFormulario();
         if (!donante) {
-            return; // Si la validación falla, no hacer nada más
+            console.error("Validación de datos del donante fallida.");
+            return;
         }
 
         let monto;
-        // Comprobar si es el botón de monto personalizado
+        const customInput = document.getElementById('custom-amount-input');
+        const customErrorEl = document.getElementById('error-custom-amount');
+        
+        // Limpiar error del monto personalizado
+        customInput.classList.remove('error-input');
+        customErrorEl.textContent = '';
+
         if (this.id === 'custom-amount-btn') {
-            const customInput = document.getElementById('custom-amount-input');
             monto = parseInt(customInput.value, 10);
             if (isNaN(monto) || monto < 1000) {
-                alert('Por favor, ingresa un monto válido (mínimo $1.000).');
-                customInput.style.borderColor = 'red';
+                customErrorEl.textContent = 'Ingresa un monto válido (mínimo $1.000).';
+                customInput.classList.add('error-input');
                 customInput.focus();
                 return;
             }
         } else {
-            // Es un botón de monto predefinido
             monto = parseInt(this.getAttribute('data-monto'), 10);
         }
 
