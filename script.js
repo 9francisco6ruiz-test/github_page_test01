@@ -20,7 +20,7 @@
   }
 
   // ============================================
-  // 2. PERSONALIZAR MENSAJE EN LA PÁGINA
+  // 2. PERSONALIZAR MENSAJE EN LA PÁGINA (CORREGIDO)
   // ============================================
   function personalizarMensaje(codigoVoluntario) {
     const nombreFormateado = codigoVoluntario
@@ -31,18 +31,15 @@
     const heroContent = document.querySelector('.hero-content');
     if (heroContent) {
       let mensajeDiv = document.getElementById('mensaje-voluntario');
+      // Si el mensaje no existe, lo creamos
       if (!mensajeDiv) {
         mensajeDiv = document.createElement('div');
         mensajeDiv.id = 'mensaje-voluntario';
-        // Los estilos ahora están en el CSS para una mejor organización
-        heroContent.insertAdjacentHTML('afterbegin', `
-          <div id="mensaje-voluntario">
-            <p>🤝 Estás apoyando la campaña de <strong>${nombreFormateado}</strong></p>
-          </div>
-        `);
-      } else {
-        mensajeDiv.innerHTML = `<p>🤝 Estás apoyando la campaña de <strong>${nombreFormateado}</strong></p>`;
+        // Usamos prepend para añadirlo al inicio del hero-content, sin borrar nada
+        heroContent.prepend(mensajeDiv);
       }
+      // Actualizamos el contenido del mensaje
+      mensajeDiv.innerHTML = `<p>🤝 Estás apoyando la campaña de <strong>${nombreFormateado}</strong></p>`;
     }
   }
 
@@ -58,7 +55,7 @@
   }
 
   // ============================================
-  // 4. VALIDAR FORMULARIO DE DONANTE (VERSIÓN MEJORADA)
+  // 4. VALIDAR FORMULARIO DE DONANTE
   // ============================================
   function validarFormulario() {
     const donorNameInput = document.getElementById('donor-name');
@@ -70,20 +67,20 @@
     const email = donorEmailInput.value.trim();
     let esValido = true;
 
-    // --- Limpiar errores previos ---
+    // Limpiar errores previos
     donorNameInput.classList.remove('error-input');
     errorNameEl.textContent = '';
     donorEmailInput.classList.remove('error-input');
     errorEmailEl.textContent = '';
 
-    // --- Validación del Nombre ---
+    // Validación del Nombre
     if (name === '') {
       errorNameEl.textContent = 'Por favor, ingresa tu nombre completo.';
       donorNameInput.classList.add('error-input');
       esValido = false;
     }
 
-    // --- Validación del Email ---
+    // Validación del Email
     if (email === '') {
       errorEmailEl.textContent = 'El correo electrónico es obligatorio.';
       donorEmailInput.classList.add('error-input');
