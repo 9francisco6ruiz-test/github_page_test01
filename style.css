@@ -2,6 +2,7 @@
 :root {
     --color-primary: #004080; /* Azul institucional */
     --color-accent: #F28C28;  /* Naranja acento */
+    --color-error: #e74c3c;   /* Rojo para errores */
     --color-white: #FFFFFF;
     --color-text: #333333;
     --color-light-gray: #f4f4f4;
@@ -19,14 +20,14 @@ h3 { font-size: 1.5rem; color: var(--color-primary); margin-bottom: 20px; font-w
 section { padding: 80px 0; }
 
 /* ===== SECCIÓN HERO ===== */
-.hero { background: var(--color-primary); height: 90vh; display: flex; justify-content: center; align-items: center; text-align: center; color: var(--color-white); padding: 0 20px; }
+.hero { background: var(--color-primary); min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: var(--color-white); padding: 40px 20px; }
 .hero-content { max-width: 800px; }
 .hero-title { font-size: 3.5rem; font-weight: 900; margin-bottom: 20px; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
 .hero-subtitle { font-size: 1.5rem; margin-bottom: 30px; }
 .cta-button { display: inline-block; background-color: var(--color-accent); color: var(--color-white); padding: 15px 30px; border-radius: 50px; text-decoration: none; font-size: 1.2rem; font-weight: 700; transition: transform 0.3s ease, background-color 0.3s ease; }
 .cta-button:hover { background-color: #e67e22; transform: translateY(-3px); }
 
-/* ===== SECCIÓN FORMULARIO DE DONACIÓN (REDiseñada) ===== */
+/* ===== SECCIÓN FORMULARIO DE DONACIÓN ===== */
 .donation-section { background-color: var(--color-white); }
 .donation-subtitle { text-align: center; font-size: 1.2rem; max-width: 700px; margin: -20px auto 40px; color: #666; }
 .donation-widget {
@@ -38,7 +39,7 @@ section { padding: 80px 0; }
     box-shadow: var(--shadow);
 }
 .form-step { margin-bottom: 40px; }
-.form-group { margin-bottom: 15px; }
+.form-group { margin-bottom: 15px; position: relative; }
 .form-group label { display: block; font-weight: 700; margin-bottom: 8px; color: #555; text-align: left; }
 .form-group input {
     width: 100%;
@@ -115,9 +116,38 @@ section { padding: 80px 0; }
 /* ===== FOOTER ===== */
 .footer { background-color: var(--color-primary); color: var(--color-white); text-align: center; padding: 40px 20px; }
 
+/* ===== ESTILOS DE VALIDACIÓN Y MENSAJES ===== */
+.error-message {
+    color: var(--color-error);
+    font-size: 0.875em;
+    font-weight: bold;
+    display: block;
+    margin-top: 5px;
+    min-height: 1.2em; /* Evita que el layout salte al aparecer el mensaje */
+}
+input.error-input {
+    border-color: var(--color-error) !important;
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.5) !important;
+}
+#mensaje-voluntario {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin: 0 auto 30px; /* Separado del título */
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+#mensaje-voluntario p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) { 
     h2 { font-size: 2rem; } 
+    .hero { min-height: 70vh; }
     .hero-title { font-size: 2.5rem; } 
     .hero-subtitle { font-size: 1.2rem; } 
     .donation-widget { padding: 20px; }
