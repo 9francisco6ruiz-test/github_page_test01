@@ -8,10 +8,11 @@
     <meta name="description" content="Únete a nuestra colecta anual y ayúdanos a construir un Chile más justo y solidario. Tu donación transforma vidas a través de la ingeniería humanitaria.">
     <meta name="keywords" content="donación, ISF Chile, ingeniería sin fronteras, colecta, solidaridad, desarrollo sostenible">
     
+    <!-- ¡IMPORTANTE! Reemplaza estas URLs con las tuyas -->
     <meta property="og:title" content="Colecta Anual 2025 | Fundación ISF Chile" />
     <meta property="og:description" content="Cada donación nos acerca a un Chile más justo y solidario." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://isf-chile.org/path/to/social-share-image.jpg" />
+    <meta property="og:image" content="https://isf-chile.org/ruta/a/tu/imagen-social.jpg" />
     <meta property="og:url" content="https://tu-usuario.github.io/tu-repo/" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,36 +25,35 @@
 
     <header class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">Únete a la Colecta Anual ISF Chile</h1>
-            <p class="hero-subtitle">Cada donación nos acerca a un Chile más justo y solidario.</p>
-            <a href="#donation" class="cta-button">Haz tu donación ahora</a>
+            <!-- Este div se usará para el mensaje del voluntario -->
         </div>
     </header>
 
     <main>
-        <!-- ===== SECCIÓN FORMULARIO DE DONACIÓN (MOVIDA AQUÍ) ===== -->
         <section id="donation" class="donation-section">
             <div class="container">
                 <h2>Realiza tu donación</h2>
                 <p class="donation-subtitle">Tu aporte, sin importar el monto, impulsa proyectos de ingeniería humanitaria.</p>
                 
                 <div class="donation-widget">
-                    <!-- PASO 1: FORMULARIO DE DATOS -->
                     <div class="form-step">
                         <h3>1. Completa tus datos</h3>
-                        <form id="donor-form">
+                        <form id="donor-form" novalidate>
                             <div class="form-group">
                                 <label for="donor-name">Nombre Completo</label>
-                                <input type="text" id="donor-name" name="name" placeholder="Ej: Juan Pérez" required>
+                                <input type="text" id="donor-name" name="name" placeholder="Ej: Javiera Rojas" required>
+                                <!-- Contenedor para mensaje de error -->
+                                <small id="error-donor-name" class="error-message"></small>
                             </div>
                             <div class="form-group">
                                 <label for="donor-email">Correo Electrónico</label>
-                                <input type="email" id="donor-email" name="email" placeholder="Ej: juan.perez@email.com" required>
+                                <input type="email" id="donor-email" name="email" placeholder="Ej: javiera.rojas@email.com" required>
+                                <!-- Contenedor para mensaje de error -->
+                                <small id="error-donor-email" class="error-message"></small>
                             </div>
                         </form>
                     </div>
 
-                    <!-- PASO 2: SELECCIÓN DE MONTO -->
                     <div class="amount-step">
                         <h3>2. Elige un monto</h3>
                         <div class="donation-options">
@@ -66,12 +66,13 @@
                             <input type="number" id="custom-amount-input" placeholder="Otro monto (CLP)" min="1000">
                             <button class="donation-btn" id="custom-amount-btn">Donar este monto</button>
                         </div>
+                        <!-- Contenedor para mensaje de error del monto personalizado -->
+                        <small id="error-custom-amount" class="error-message"></small>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ===== SECCIÓN VIDEO INSTITUCIONAL (AHORA SEGUNDA) ===== -->
         <section class="video-section">
             <div class="container">
                 <h2>Conoce cómo tu aporte transforma vidas</h2>
@@ -81,7 +82,6 @@
             </div>
         </section>
 
-        <!-- ===== SECCIÓN DE LOGROS E IMPACTO (AHORA TERCERA) ===== -->
         <section class="impact-section">
             <div class="container">
                 <h2>Nuestros logros</h2>
