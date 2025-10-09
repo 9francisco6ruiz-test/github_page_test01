@@ -107,7 +107,7 @@
     
     const paykuConfig = {
       baseUrl: 'https://app.payku.cl/payment',
-      publicKey: 'tu_public_key_aqui' // ← ¡¡¡REEMPLAZAR CON TU PUBLIC KEY DE PAYKU!!!
+      publicKey: 'tkpucea57c4ac26436994d30a85a0ee8' // ← ¡¡¡REEMPLAZAR CON TU PUBLIC KEY DE PAYKU!!!
     };
     
     const params = new URLSearchParams({
