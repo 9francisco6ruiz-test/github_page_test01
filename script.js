@@ -77,17 +77,21 @@
     return { name, email };
   }
 
-  // ============================================
-// 4. FUNCIÓN PRINCIPAL: IR A DONAR (APUNTANDO A PRODUCCIÓN)
+ // ============================================
+// 4. FUNCIÓN PRINCIPAL: IR A DONAR (VERSIÓN FINAL CON URLS CORREGIDAS)
 // ============================================
 function irADonar(monto, donante) {
   const voluntario = localStorage.getItem('isf_voluntario') || 'directo';
   const orderId = self.crypto.randomUUID ? self.crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
   
+  // ¡SOLUCIÓN AL PROBLEMA DE LA RUTA!
+  // Definimos el nombre de tu repositorio para construir las URLs correctamente.
+  const repoPath = '/Landing_Colecta_ISF'; 
+
   const paykuConfig = {
-    // Apuntamos al servidor de PRODUCCIÓN
-    baseUrl: 'https://app.payku.cl/api/transaction', // <-- ¡CAMBIO REALIZADO AQUÍ!
-    publicKey: 'tkpucea57c4ac26436994d30a85a0ee8' // He añadido los guiones que suelen llevar estos tokens, por si acaso. Si el tuyo no los lleva, quítalos.
+    // Usaremos la URL de producción, ya que tu token es de producción.
+    baseUrl: 'https://app.payku.cl/api/transaction', 
+    publicKey: 'tkpucea57c4ac26436994d30a85a0ee8'
   };
 
   const datosTransaccion = {
@@ -100,8 +104,12 @@ function irADonar(monto, donante) {
       voluntario: voluntario,
       campana: 'alcancia_digital_2025'
     },
-    urlreturn: `${window.location.origin}/gracias.html?order_id=${orderId}`,
-    urlnotify: 'https://script.google.com/macros/s/AKfycbwXf1iJJeWy-0DbygQiPQkX5HBba6hBf-HVJ8-mTpPXBMiC5AMFjqjdZuec8AJ_OoRmNw/exec' // ¡IMPORTANTE! Poner la URL real aquí.
+    // Construimos la URL de retorno correcta, incluyendo el path del repo.
+    urlreturn: `${window.location.origin}${repoPath}/gracias.html?order_id=${orderId}`,
+    // ¡AÑADIMOS LA URL DE CANCELACIÓN!
+    // Esta apunta de vuelta a la página principal.
+    urlcancel: `${window.location.origin}${repoPath}/index.html`,
+    urlnotify: 'URL_DE_TU_WEBHOOK_DE_GOOGLE_APPS_SCRIPT' // ¡IMPORTANTE! Poner la URL real aquí.
   };
 
   fetch(paykuConfig.baseUrl, {
@@ -135,7 +143,7 @@ function irADonar(monto, donante) {
     console.error('❌ Error al crear la transacción en Payku:', error);
     alert('Hubo un error al intentar iniciar el proceso de pago. Por favor, revisa la consola para más detalles.');
   });
-}
+}```
   // ============================================
   // 5. INICIALIZAR BOTONES Y LÓGICA DE DONACIÓN
   // ============================================
