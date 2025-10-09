@@ -102,39 +102,59 @@
   // 5. FUNCIÓN PRINCIPAL: IR A DONAR
   // ============================================
   function irADonar(monto, donante) {
-    const voluntario = localStorage.getItem('isf_voluntario') || 'directo';
-    const uuid = self.crypto.randomUUID ? self.crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
-    
-    const paykuConfig = {
-      baseUrl: 'https://des.payku.cl/payment',
-      publicKey: 'tkpucea57c4ac26436994d30a85a0ee8' // ← ¡¡¡REEMPLAZAR CON TU PUBLIC KEY DE PAYKU!!!
-    };
-    
-    const params = new URLSearchParams({
-      email: donante.email,
-      name: donante.name,
-      amount: monto,
-      subject: 'Donación ISF Chile',
-      external_id: uuid,
-      'custom_fields[voluntario]': voluntario,
-      'custom_fields[campana]': 'alcancia_digital_2025',
-      return_url: `${window.location.origin}/gracias.html?uuid=${uuid}`,
-      cancel_url: window.location.href
-    });
-    
-    const urlCompleta = `${paykuConfig.baseUrl}?${params.toString()}`;
-    
-    console.log('🚀 Datos de donación:', {
-      monto: monto,
-      voluntario: voluntario,
-      donante: donante,
-      uuid: uuid,
-      timestamp: new Date().toISOString()
-    });
-    
-    window.location.href = urlCompleta;
-  }
+  const voluntario = localStorage.getItem('isf_voluntario') || 'directo';
+  // El nombre del parámetro para el ID único es 'order', no 'external_id'.
+  const orderId = self.crypto.randomUUID ? self.crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
+  
+  const paykuConfig = {
+    // La URL de redirección para el checkout web podría ser diferente. 
+    // Vamos a probar con la que ya teníamos, pero si no funciona, 
+    // hay que buscar en la documentación la URL específica para "Checkout Web" o "Integración por Redirección".
+    baseUrl: 'https://des.payku.cl/payment', 
+    publicKey: 'tkpucea57c4ac26436994d30a85a0ee8' 
+  };
+  
+  // ¡AQUÍ ESTÁ EL CAMBIO MÁS IMPORTANTE!
+  // Adaptamos los nombres de los parámetros a lo que la documentación de la API de Payku espera.
+  const params = new URLSearchParams({
+    // La documentación de Payku usa 'token' en lugar de 'publicKey' o 'apiKey' en los parámetros de la URL.
+    // Esta es una suposición basada en la práctica común.
+    token: paykuConfig.publicKey,
 
+    email: donante.email,
+    // La documentación no pide 'name', así que lo omitimos por ahora.
+    order: orderId, // Cambiamos 'external_id' por 'order'
+    subject: 'Donación ISF Chile',
+    amount: monto,
+    currency: 'CLP', // Añadimos la moneda, que es requerida.
+    
+    // El nombre del parámetro para la URL de retorno podría ser diferente.
+    // La documentación que encontraste lo llama 'urlreturn'.
+    urlreturn: `${window.location.origin}/gracias.html?order_id=${orderId}`,
+    
+    // Aunque no lo usamos para la redirección, es bueno saber que la URL del webhook se llama 'urlnotify'.
+    // urlnotify: 'URL_DE_TU_WEBHOOK_DE_GOOGLE_APPS_SCRIPT',
+
+    // Enviamos nuestros datos personalizados. La forma de enviarlos puede variar.
+    // Probaremos con el formato que ya teníamos.
+    'custom_fields[voluntario]': voluntario,
+    'custom_fields[campana]': 'alcancia_digital_2025'
+  });
+  
+  const urlCompleta = `${paykuConfig.baseUrl}?${params.toString()}`;
+  
+  console.log('🚀 Datos de donación (versión corregida):', {
+    monto: monto,
+    voluntario: voluntario,
+    donante: donante,
+    orderId: orderId,
+    timestamp: new Date().toISOString()
+  });
+
+  console.log('Intentando redirigir a:', urlCompleta); // Línea para depurar la URL final
+  
+  window.location.href = urlCompleta;
+}
   // ============================================
   // 6. INICIALIZAR BOTONES Y LÓGICA DE DONACIÓN
   // ============================================
