@@ -102,13 +102,13 @@
       subject: 'Donación ISF Chile',
       amount: monto,
       // La documentación indica que el token público se envía como 'public_token' en el formulario
-      public_token: paykuConfig.publicKey, 
+      token: paykuConfig.publicKey, 
       // Los campos personalizados se envían como 'additional_parameters'
       'additional_parameters[voluntario]': voluntario,
       'additional_parameters[campana]': 'alcancia_digital_2025',
       // Payku necesita saber a dónde redirigir al usuario después del pago
       urlreturn: `${window.location.origin}/gracias.html?order_id=${orderId}`,
-      urlnotify: 'URL_DE_TU_WEBHOOK_DE_GOOGLE_APPS_SCRIPT' // Esta URL debe ser la real de tu Apps Script
+      urlnotify: 'https://script.google.com/macros/s/AKfycbwXf1iJJeWy-0DbygQiPQkX5HBba6hBf-HVJ8-mTpPXBMiC5AMFjqjdZuec8AJ_OoRmNw/exec' // Esta URL debe ser la real de tu Apps Script
     };
 
     for (const key in fields) {
