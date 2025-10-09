@@ -87,7 +87,7 @@ function irADonar(monto, donante) {
   const paykuConfig = {
     // Apuntamos al servidor de PRODUCCIÓN
     baseUrl: 'https://app.payku.cl/api/transaction', // <-- ¡CAMBIO REALIZADO AQUÍ!
-    publicKey: 'tkpucea5-7c4ac26436994d30a85a0ee8' // He añadido los guiones que suelen llevar estos tokens, por si acaso. Si el tuyo no los lleva, quítalos.
+    publicKey: 'tkpucea57c4ac26436994d30a85a0ee8' // He añadido los guiones que suelen llevar estos tokens, por si acaso. Si el tuyo no los lleva, quítalos.
   };
 
   const datosTransaccion = {
