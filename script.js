@@ -101,7 +101,7 @@ function irADonar(monto, donante) {
       campana: 'alcancia_digital_2025'
     },
     urlreturn: `${window.location.origin}/gracias.html?order_id=${orderId}`,
-    urlnotify: 'URL_DE_TU_WEBHOOK_DE_GOOGLE_APPS_SCRIPT' // ¡IMPORTANTE! Poner la URL real aquí.
+    urlnotify: 'https://script.google.com/macros/s/AKfycbwXf1iJJeWy-0DbygQiPQkX5HBba6hBf-HVJ8-mTpPXBMiC5AMFjqjdZuec8AJ_OoRmNw/exec' // ¡IMPORTANTE! Poner la URL real aquí.
   };
 
   fetch(paykuConfig.baseUrl, {
