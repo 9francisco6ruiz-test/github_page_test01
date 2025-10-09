@@ -77,73 +77,74 @@
     return { name, email };
   }
 
- // ============================================
-// 4. FUNCIÓN PRINCIPAL: IR A DONAR (VERSIÓN FINAL CON URLS CORREGIDAS)
-// ============================================
-function irADonar(monto, donante) {
-  const voluntario = localStorage.getItem('isf_voluntario') || 'directo';
-  const orderId = self.crypto.randomUUID ? self.crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
-  
-  // ¡SOLUCIÓN AL PROBLEMA DE LA RUTA!
-  // Definimos el nombre de tu repositorio para construir las URLs correctamente.
-  const repoPath = '/Landing_Colecta_ISF'; 
+  // ============================================
+  // 4. FUNCIÓN PRINCIPAL: IR A DONAR (VERSIÓN CORREGIDA)
+  // ============================================
+  function irADonar(monto, donante) {
+    const voluntario = localStorage.getItem('isf_voluntario') || 'directo';
+    const orderId = self.crypto.randomUUID ? self.crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
+    
+    // CORRECCIÓN: Definimos el path del repositorio para construir las URLs correctamente.
+    const repoPath = '/Landing_Colecta_ISF'; 
 
-  const paykuConfig = {
-    // Usaremos la URL de producción, ya que tu token es de producción.
-    baseUrl: 'https://app.payku.cl/api/transaction', 
-    publicKey: 'tkpucea57c4ac26436994d30a85a0ee8'
-  };
+    const paykuConfig = {
+      baseUrl: 'https://app.payku.cl/api/transaction',
+      publicKey: 'tkpucea57c4ac26436994d30a85a0ee8'
+    };
 
-  const datosTransaccion = {
-    email: donante.email,
-    order: orderId,
-    subject: 'Donación ISF Chile',
-    amount: monto,
-    currency: 'CLP',
-    additional_parameters: {
-      voluntario: voluntario,
-      campana: 'alcancia_digital_2025'
-    },
-    // Construimos la URL de retorno correcta, incluyendo el path del repo.
-    urlreturn: `${window.location.origin}${repoPath}/gracias.html?order_id=${orderId}`,
-    // ¡AÑADIMOS LA URL DE CANCELACIÓN!
-    // Esta apunta de vuelta a la página principal.
-    urlcancel: `${window.location.origin}${repoPath}/index.html`,
-    urlnotify: 'URL_DE_TU_WEBHOOK_DE_GOOGLE_APPS_SCRIPT' // ¡IMPORTANTE! Poner la URL real aquí.
-  };
+    const datosTransaccion = {
+      email: donante.email,
+      order: orderId,
+      subject: 'Donación ISF Chile',
+      amount: monto,
+      currency: 'CLP',
+      additional_parameters: {
+        voluntario: voluntario,
+        campana: 'alcancia_digital_2025'
+      },
+      // CORRECCIÓN: Usamos la variable repoPath para construir la URL de retorno.
+      urlreturn: `${window.location.origin}${repoPath}/gracias.html?order_id=${orderId}`,
+      // CORRECCIÓN: Añadimos la URL de cancelación.
+      urlcancel: `${window.location.origin}${repoPath}/index.html`,
+      // ¡IMPORTANTE! Asegúrate de que esta URL sea la real de tu Google Apps Script.
+      urlnotify: 'https://script.google.com/macros/s/AKfycbwXf1iJJeWy-0DbygQiPQkX5HBba6hBf-HVJ8-mTpPXBMiC5AMFjqjdZuec8AJ_OoRmNw/exec' // <-- REEMPLAZA CON TU URL REAL
+    };
 
-  fetch(paykuConfig.baseUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + paykuConfig.publicKey
-    },
-    body: JSON.stringify(datosTransaccion)
-  })
-  .then(response => {
-    if (!response.ok) {
-      return response.json().then(errorData => {
-        throw new Error(`Error del servidor: ${response.status} - ${JSON.stringify(errorData)}`);
-      });
-    }
-    return response.json();
-  })
-  .then(data => {
-    console.log('✅ Respuesta exitosa de Payku:', data);
-    const urlRedireccion = data.url || data.payment_url; 
+    console.log('🚀 Preparando para enviar los siguientes datos a Payku:', datosTransaccion);
 
-    if (urlRedireccion) {
-      window.location.href = urlRedireccion;
-    } else {
-      alert('Se creó la transacción, pero no se encontró una URL de pago. Revisa la consola.');
-      console.error('La respuesta de Payku no contenía una URL de redirección.', data);
-    }
-  })
-  .catch(error => {
-    console.error('❌ Error al crear la transacción en Payku:', error);
-    alert('Hubo un error al intentar iniciar el proceso de pago. Por favor, revisa la consola para más detalles.');
-  });
-}```
+    fetch(paykuConfig.baseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + paykuConfig.publicKey
+      },
+      body: JSON.stringify(datosTransaccion)
+    })
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(errorData => {
+          throw new Error(`Error del servidor: ${response.status} - ${JSON.stringify(errorData)}`);
+        });
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('✅ Respuesta exitosa de Payku:', data);
+      const urlRedireccion = data.url || data.payment_url; 
+
+      if (urlRedireccion) {
+        window.location.href = urlRedireccion;
+      } else {
+        alert('Se creó la transacción, pero no se encontró una URL de pago. Revisa la consola.');
+        console.error('La respuesta de Payku no contenía una URL de redirección.', data);
+      }
+    })
+    .catch(error => {
+      console.error('❌ Error al crear la transacción en Payku:', error);
+      alert('Hubo un error al intentar iniciar el proceso de pago. Por favor, revisa la consola para más detalles.');
+    });
+  }
+
   // ============================================
   // 5. INICIALIZAR BOTONES Y LÓGICA DE DONACIÓN
   // ============================================
