@@ -78,53 +78,81 @@
   }
 
   // ============================================
-  // 4. FUNCIÓN PRINCIPAL: IR A DONAR (VERSIÓN DEFINITIVA)
-  // ============================================
-  function irADonar(monto, donante) {
-    const voluntario = localStorage.getItem('isf_voluntario') || 'directo';
-    const orderId = self.crypto.randomUUID ? self.crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
-    
-    const paykuConfig = {
-      baseUrl: 'https://des.payku.cl/api/transaction', // URL correcta de la API para crear la transacción
-      publicKey: 'tkpucea57c4ac26436994d30a85a0ee8' 
-    };
-    
-    // Para la redirección web, los parámetros se envían en un formulario que se auto-envía.
-    // Creamos un formulario invisible en la página, lo llenamos con los datos y lo enviamos.
-    
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = paykuConfig.baseUrl;
+// 4. FUNCIÓN PRINCIPAL: IR A DONAR (VERSIÓN FINAL CON FETCH API)
+// ============================================
+function irADonar(monto, donante) {
+  const voluntario = localStorage.getItem('isf_voluntario') || 'directo';
+  const orderId = self.crypto.randomUUID ? self.crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
+  
+  const paykuConfig = {
+    baseUrl: 'https://des.payku.cl/api/transaction',
+    publicKey: 'tkpucea57c4ac26436994d30a85a0ee8' 
+  };
 
-    const fields = {
-      email: donante.email,
-      order: orderId,
-      subject: 'Donación ISF Chile',
-      amount: monto,
-      // La documentación indica que el token público se envía como 'public_token' en el formulario
-      token: paykuConfig.publicKey, 
-      // Los campos personalizados se envían como 'additional_parameters'
-      'additional_parameters[voluntario]': voluntario,
-      'additional_parameters[campana]': 'alcancia_digital_2025',
-      // Payku necesita saber a dónde redirigir al usuario después del pago
-      urlreturn: `${window.location.origin}/gracias.html?order_id=${orderId}`,
-      urlnotify: 'https://script.google.com/macros/s/AKfycbwXf1iJJeWy-0DbygQiPQkX5HBba6hBf-HVJ8-mTpPXBMiC5AMFjqjdZuec8AJ_OoRmNw/exec' // Esta URL debe ser la real de tu Apps Script
-    };
+  // 1. Creamos un objeto JavaScript con todos los datos que la API espera.
+  const datosTransaccion = {
+    email: donante.email,
+    order: orderId,
+    subject: 'Donación ISF Chile',
+    amount: monto,
+    currency: 'CLP', // Añadimos la moneda, que es requerida.
+    // Los campos personalizados se envían como un objeto anidado.
+    additional_parameters: {
+      voluntario: voluntario,
+      campana: 'alcancia_digital_2025'
+    },
+    urlreturn: `${window.location.origin}/gracias.html?order_id=${orderId}`,
+    urlnotify: 'URL_DE_TU_WEBHOOK_DE_GOOGLE_APPS_SCRIPT' // ¡IMPORTANTE! Poner la URL real aquí.
+  };
 
-    for (const key in fields) {
-      const hiddenField = document.createElement('input');
-      hiddenField.type = 'hidden';
-      hiddenField.name = key;
-      hiddenField.value = fields[key];
-      form.appendChild(hiddenField);
+  console.log('🚀 Preparando para enviar los siguientes datos a Payku:', datosTransaccion);
+
+  // 2. Usamos la API 'fetch' para enviar los datos como JSON.
+  fetch(paykuConfig.baseUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      // La forma más común de enviar un token público en una API es a través de un encabezado 'Authorization'.
+      // El formato 'Bearer [token]' es un estándar.
+      'Authorization': 'Bearer ' + paykuConfig.publicKey
+    },
+    // Convertimos nuestro objeto de JavaScript a una cadena de texto en formato JSON.
+    body: JSON.stringify(datosTransaccion)
+  })
+  .then(response => {
+    // Verificamos si la respuesta del servidor fue exitosa.
+    if (!response.ok) {
+      // Si no fue exitosa, leemos el error y lo mostramos.
+      return response.json().then(errorData => {
+        throw new Error(`Error del servidor: ${response.status} - ${JSON.stringify(errorData)}`);
+      });
     }
+    // Si fue exitosa, convertimos la respuesta a JSON.
+    return response.json();
+  })
+  .then(data => {
+    // 3. El servidor de Payku nos responde con los datos de la transacción creada.
+    // Buscamos la URL a la que debemos redirigir al usuario.
+    console.log('✅ Respuesta exitosa de Payku:', data);
+    
+    // Suponemos que la URL de redirección viene en un campo llamado 'url' o 'payment_url'.
+    // ¡DEBEMOS VERIFICAR EL NOMBRE DE ESTE CAMPO EN LA RESPUESTA REAL!
+    const urlRedireccion = data.url || data.payment_url; 
 
-    document.body.appendChild(form);
-    
-    console.log('🚀 Enviando formulario a Payku con los siguientes datos:', fields);
-    
-    form.submit();
-  }
+    if (urlRedireccion) {
+      // Si encontramos la URL, redirigimos al usuario para que pague.
+      window.location.href = urlRedireccion;
+    } else {
+      alert('Se creó la transacción, pero no se encontró una URL de pago. Revisa la consola.');
+      console.error('La respuesta de Payku no contenía una URL de redirección.', data);
+    }
+  })
+  .catch(error => {
+    // Si algo falla en el proceso, lo mostramos en la consola y al usuario.
+    console.error('❌ Error al crear la transacción en Payku:', error);
+    alert('Hubo un error al intentar iniciar el proceso de pago. Por favor, revisa la consola para más detalles.');
+  });
+}
 
   // ============================================
   // 5. INICIALIZAR BOTONES Y LÓGICA DE DONACIÓN
