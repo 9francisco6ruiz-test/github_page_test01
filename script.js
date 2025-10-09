@@ -106,7 +106,7 @@
     const uuid = self.crypto.randomUUID ? self.crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
     
     const paykuConfig = {
-      baseUrl: 'https://app.payku.cl/payment',
+      baseUrl: 'https://des.payku.cl/payment',
       publicKey: 'tkpucea57c4ac26436994d30a85a0ee8' // ← ¡¡¡REEMPLAZAR CON TU PUBLIC KEY DE PAYKU!!!
     };
     
